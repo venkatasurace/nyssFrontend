@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, use } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -20,6 +20,7 @@ import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
 import { DataGrid } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
+import IncomeAddSidebarDrawer from 'src/components/list/reports/income/incomeAddDrawer'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -36,7 +37,7 @@ import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/userData'
+import { fetchData, deleteUser } from 'src/store/apps/incomeReport'
 
 // ** Third Party Components
 import axios from 'axios'
@@ -56,9 +57,8 @@ const userRoleObj = {
 }
 
 const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+  paid: 'success',
+  pending: 'warning'
 }
 
 const LinkStyled = styled(Link)(({ theme }) => ({
@@ -150,15 +150,14 @@ const columns = [
     field: 'fullName',
     headerName: 'User',
     renderCell: ({ row }) => {
-      const { fullName, username } = row
+      const { fullName, bookId } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {renderClient(row)}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <LinkStyled href='/apps/user/view/overview/'>{fullName}</LinkStyled>
             <Typography noWrap variant='caption'>
-              {`@${username}`}
+              {bookId !== undefined ? `@Book-Page no:${bookId}` : `Committee Member`}
             </Typography>
           </Box>
         </Box>
@@ -166,7 +165,7 @@ const columns = [
     }
   },
   {
-    flex: 0.2,
+    flex: 0.1,
     field: 'category',
     minWidth: 150,
     headerName: 'Category',
@@ -182,7 +181,41 @@ const columns = [
     }
   },
   {
+    flex: 0.1,
+    minWidth: 110,
+    field: 'amount',
+    headerName: 'Amount',
+    renderCell: ({ row }) => {
+      return (
+        <CustomChip
+          skin='light'
+          size='small'
+          label={row.amount}
+          color={userStatusObj[row.status]}
+          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '23px' } }}
+        />
+      )
+    }
+  },
+  {
     flex: 0.2,
+    minWidth: 110,
+    field: 'mode',
+    headerName: 'Payment Mode',
+    renderCell: ({ row }) => {
+      return (
+        <CustomChip
+          skin='light'
+          size='small'
+          label={row.mode}
+          color={row.mode === 'cash' ? 'success' : 'primary'}
+          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '18px' } }}
+        />
+      )
+    }
+  },
+  {
+    flex: 0.1,
     minWidth: 110,
     field: 'status',
     headerName: 'Status',
@@ -215,10 +248,11 @@ const FounderList = ({ apiData }) => {
   const [status, setStatus] = useState('')
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
+  const [publicData, setPublicData] = useState([])
 
   // ** Hooks
   const dispatch = useDispatch()
-  const store = useSelector(state => state.userData)
+  const store = useSelector(state => state.incomeReport)
   useEffect(() => {
     dispatch(fetchData())
   }, [dispatch])
@@ -250,7 +284,7 @@ const FounderList = ({ apiData }) => {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <div>Team Income</div>
-                  <div>Total : 9000</div>
+                  <div>Total : {store.commitTotalAmount}</div>
                 </div>
               }
               sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }}
@@ -265,7 +299,7 @@ const FounderList = ({ apiData }) => {
             />
             <DataGrid
               autoHeight
-              rows={store.memberData}
+              rows={store.commitFilterData}
               columns={columns}
               checkboxSelection
               disableRowSelectionOnClick
@@ -286,23 +320,17 @@ const FounderList = ({ apiData }) => {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <div>Public Income</div>
-                  <div>Total : 9000</div>
+                  <div>Total : {store.publicTotalAmount}</div>
                 </div>
               }
               sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }}
             />
             <Divider />
-            <TableHeader
-              value={value}
-              handleFilter={handleFilter}
-              toggle={toggleAddUserDrawer}
-              headerBtn='true'
-              btnText='Add'
-            />
+            <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
 
             <DataGrid
               autoHeight
-              rows={store.memberData}
+              rows={store.publicFilterData}
               columns={columns}
               checkboxSelection
               disableRowSelectionOnClick
@@ -314,7 +342,7 @@ const FounderList = ({ apiData }) => {
           </Card>
         </Grid>
 
-        <FounderUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+        <IncomeAddSidebarDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
       </Grid>
     </>
   )

@@ -22,6 +22,7 @@ import { useForm, Controller } from 'react-hook-form'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import { DevTool } from '@hookform/devtools'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,50 +49,30 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  company: yup.string().required(),
-  country: yup.string().required(),
-  email: yup.string().email().required(),
-  contact: yup
-    .number()
-    .typeError('Contact Number field is required')
-    .min(10, obj => showErrors('Contact Number', obj.value.length, obj.min))
-    .required(),
-  fullName: yup
-    .string()
-    .min(3, obj => showErrors('First Name', obj.value.length, obj.min))
-    .required(),
-  username: yup
-    .string()
-    .min(3, obj => showErrors('Username', obj.value.length, obj.min))
-    .required()
+  BookId: yup.number().typeError('BookId in number').required(),
+  fullName: yup.string().required(),
+  amount: yup.number().typeError('Amount in number').min(1).required(),
+  paymentMode: yup.string().required(),
+  category: yup.string().required(),
+  paymentStatus: yup.string().required()
 })
 
 const defaultValues = {
-  email: '',
-  company: '',
-  country: '',
+  BookId: '',
   fullName: '',
-  username: '',
-  contact: Number('')
+  amount: '',
+  paymentMode: '',
+  category: '',
+  paymentStatus: ''
 }
 
-const SidebarAddUser = props => {
+const IncomeAddSidebarDrawer = props => {
   // ** Props
   const { open, toggle } = props
-
-  // ** State
-  const [plan, setPlan] = useState('basic')
-  const [role, setRole] = useState('subscriber')
-
-  // ** Hooks
-  const dispatch = useDispatch()
-  const store = useSelector(state => state.user)
 
   const {
     reset,
     control,
-    setValue,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -101,30 +82,12 @@ const SidebarAddUser = props => {
   })
 
   const onSubmit = data => {
-    if (store.allData.some(u => u.email === data.email || u.username === data.username)) {
-      store.allData.forEach(u => {
-        if (u.email === data.email) {
-          setError('email', {
-            message: 'Email already exists!'
-          })
-        }
-        if (u.username === data.username) {
-          setError('username', {
-            message: 'Username already exists!'
-          })
-        }
-      })
-    } else {
-      dispatch(addUser({ ...data, role, currentPlan: plan }))
-      toggle()
-      reset()
-    }
+    console.log('onsubmit')
+    console.log(data)
+    reset()
   }
 
   const handleClose = () => {
-    setPlan('basic')
-    setRole('subscriber')
-    setValue('contact', Number(''))
     toggle()
     reset()
   }
@@ -139,13 +102,30 @@ const SidebarAddUser = props => {
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <Header>
-        <Typography variant='h6'>Add User</Typography>
+        <Typography variant='h6'>Add Income</Typography>
         <IconButton size='small' onClick={handleClose} sx={{ color: 'text.primary' }}>
           <Icon icon='mdi:close' fontSize={20} />
         </IconButton>
       </Header>
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <Controller
+              name='BookId'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  value={value}
+                  label='Book Id'
+                  onChange={onChange}
+                  placeholder='Book Id'
+                  error={Boolean(errors.BookId)}
+                />
+              )}
+            />
+            {errors.BookId && <FormHelperText sx={{ color: 'error.main' }}>{errors.BookId.message}</FormHelperText>}
+          </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='fullName'
@@ -156,7 +136,7 @@ const SidebarAddUser = props => {
                   value={value}
                   label='Full Name'
                   onChange={onChange}
-                  placeholder='John Doe'
+                  placeholder='Full Name'
                   error={Boolean(errors.fullName)}
                 />
               )}
@@ -165,39 +145,38 @@ const SidebarAddUser = props => {
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-              name='number'
+              name='amount'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
                   value={value}
-                  label='Number'
+                  label='Amount'
                   onChange={onChange}
-                  placeholder='Number'
-                  error={Boolean(errors.number)}
+                  placeholder='Amount'
+                  error={Boolean(errors.amount)}
                 />
               )}
             />
-            {errors.number && <FormHelperText sx={{ color: 'error.main' }}>{errors.number.message}</FormHelperText>}
+            {errors.amount && <FormHelperText sx={{ color: 'error.main' }}>{errors.amount.message}</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-              name='fatherName'
+              name='paymentMode'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
-                  type='fatherName'
                   value={value}
-                  label='Father Name'
+                  label='Payment Mode'
                   onChange={onChange}
-                  placeholder='Father Name'
-                  error={Boolean(errors.fatherName)}
+                  placeholder='payment Mode'
+                  error={Boolean(errors.paymentMode)}
                 />
               )}
             />
-            {errors.fatherName && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.fatherName.message}</FormHelperText>
+            {errors.paymentMode && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.paymentMode.message}</FormHelperText>
             )}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -210,29 +189,32 @@ const SidebarAddUser = props => {
                   value={value}
                   label='Category'
                   onChange={onChange}
-                  placeholder='Senior or Junior'
-                  error={Boolean(errors.company)}
+                  placeholder='member/public'
+                  error={Boolean(errors.category)}
                 />
               )}
             />
             {errors.category && <FormHelperText sx={{ color: 'error.main' }}>{errors.category.message}</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='role-select'>Select Role</InputLabel>
-            <Select
-              fullWidth
-              value={role}
-              id='select-role'
-              label='Select Role'
-              labelId='role-select'
-              onChange={e => setRole(e.target.value)}
-              inputProps={{ placeholder: 'Select Role' }}
-            >
-              <MenuItem value='admin'>Admin</MenuItem>
-              <MenuItem value='user'>User</MenuItem>
-            </Select>
+            <Controller
+              name='paymentStatus'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  value={value}
+                  label='Payment Status'
+                  onChange={onChange}
+                  placeholder='paid/pending'
+                  error={Boolean(errors.paymentStatus)}
+                />
+              )}
+            />
+            {errors.paymentStatus && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.paymentStatus.message}</FormHelperText>
+            )}
           </FormControl>
-
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }}>
               Submit
@@ -242,9 +224,10 @@ const SidebarAddUser = props => {
             </Button>
           </Box>
         </form>
+        <DevTool control={control} />
       </Box>
     </Drawer>
   )
 }
 
-export default SidebarAddUser
+export default IncomeAddSidebarDrawer

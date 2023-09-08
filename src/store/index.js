@@ -5,11 +5,13 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import calendar from 'src/store/apps/calendar'
 import userData from 'src/store/apps/userData'
+import incomeReport from 'src/store/apps/incomeReport'
 
 export const store = configureStore({
   reducer: {
     calendar,
-    userData
+    userData,
+    incomeReport
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
