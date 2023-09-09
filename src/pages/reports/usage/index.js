@@ -202,10 +202,10 @@ const columns = [
       return (
         <CustomChip
           skin='light'
-          size='small'
+          size='large'
           label={row.amount}
-          color={userStatusObj[row.status]}
-          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '23px' } }}
+          color={'success'}
+          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '20px' } }}
         />
       )
     }
@@ -263,7 +263,7 @@ const FounderList = ({ apiData }) => {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <div>Usage</div>
-                  <div>Total : {store.commitTotalAmount}</div>
+                  <div>Total : {store.totalAmount}</div>
                 </div>
               }
               sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }}
