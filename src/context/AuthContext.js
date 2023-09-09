@@ -45,7 +45,6 @@ const AuthProvider = ({ children }) => {
         axios
           .post(authConfig.rememberEndpoint, payloadData, axiosConfig)
           .then(async response => {
-            console.log(response)
             setLoading(false)
             setUser({ ...response.data[1].userData })
           })

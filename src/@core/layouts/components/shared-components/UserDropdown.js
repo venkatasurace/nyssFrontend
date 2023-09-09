@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -32,6 +32,7 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = props => {
   // ** Props
   const { settings } = props
+  const [profileData, setProfileData] = useState({})
 
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
@@ -74,6 +75,12 @@ const UserDropdown = props => {
     handleDropdownClose()
   }
 
+  useEffect(() => {
+    const userData = JSON.parse(window.localStorage.getItem('userData'))
+    console.log(userData)
+    setProfileData(userData)
+  }, [])
+
   return (
     <Fragment>
       <Badge
@@ -111,12 +118,12 @@ const UserDropdown = props => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt='log' src={profileData.imageUrl} sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{profileData.firstName}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                Admin
+                {profileData.role}
               </Typography>
             </Box>
           </Box>

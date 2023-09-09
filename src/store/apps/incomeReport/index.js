@@ -72,7 +72,7 @@ export const appUsersSlice = createSlice({
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
       state.incomeAllData = updatedData
-      state.commitFilterData = updatedData.filter((item, i) => item.category === 'Nember')
+      state.commitFilterData = updatedData.filter((item, i) => item.category === 'Member')
       state.publicFilterData = updatedData.filter((item, i) => item.category === 'public')
       state.commitTotalAmount = commitTotalAmount
       state.publicTotalAmount = publicTotalAmount
