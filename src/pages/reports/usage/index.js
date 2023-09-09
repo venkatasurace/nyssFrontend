@@ -145,8 +145,8 @@ const RowOptions = ({ id }) => {
 
 const columns = [
   {
-    flex: 0.1,
-    minWidth: 230,
+    flex: 0.02,
+    minWidth: 30,
     field: 'slno',
     headerName: 'Sr.No',
     renderCell: ({ row }) => {
