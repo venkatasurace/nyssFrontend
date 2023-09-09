@@ -7,9 +7,17 @@ import authConfig from 'src/configs/auth'
 
 // ** Fetch Users
 export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
-  const response = await axios.get(authConfig.userData, {
-    params
-  })
+  const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
+
+  const axiosConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${storedToken}` // Set content type if needed
+    }
+  }
+
+  const response = await axios.get(authConfig.userData, axiosConfig)
 
   return response
 })

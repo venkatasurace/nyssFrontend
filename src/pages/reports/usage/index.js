@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, use } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -20,6 +20,7 @@ import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
 import { DataGrid } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
+import IncomeAddSidebarDrawer from 'src/components/list/reports/income/incomeAddDrawer'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -36,7 +37,7 @@ import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/userData'
+import { fetchData, deleteUser } from 'src/store/apps/usageReport'
 
 // ** Third Party Components
 import axios from 'axios'
@@ -56,9 +57,8 @@ const userRoleObj = {
 }
 
 const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+  paid: 'success',
+  pending: 'warning'
 }
 
 const LinkStyled = styled(Link)(({ theme }) => ({
@@ -145,21 +145,34 @@ const RowOptions = ({ id }) => {
 
 const columns = [
   {
-    flex: 0.2,
+    flex: 0.1,
     minWidth: 230,
-    field: 'fullName',
-    headerName: 'User',
+    field: 'slno',
+    headerName: 'Sr.No',
     renderCell: ({ row }) => {
-      const { fullName, username } = row
+      const { slno } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {renderClient(row)}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <LinkStyled href='/apps/user/view/overview/'>{fullName}</LinkStyled>
-            <Typography noWrap variant='caption'>
-              {`@${username}`}
-            </Typography>
+            <Typography>{slno}</Typography>
+          </Box>
+        </Box>
+      )
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 230,
+    field: 'itemName',
+    headerName: 'Item Name',
+    renderCell: ({ row }) => {
+      const { itemName } = row
+
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <Typography>{itemName}</Typography>
           </Box>
         </Box>
       )
@@ -167,33 +180,32 @@ const columns = [
   },
   {
     flex: 0.2,
-    field: 'category',
+    field: 'description',
     minWidth: 150,
-    headerName: 'Category',
+    headerName: 'Description',
     renderCell: ({ row }) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 3, color: 'green' } }}>
-          <Icon icon='mdi:laptop' fontSize={20} />
           <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.category}
+            {row.description}
           </Typography>
         </Box>
       )
     }
   },
   {
-    flex: 0.2,
+    flex: 0.1,
     minWidth: 110,
-    field: 'status',
-    headerName: 'Status',
+    field: 'amount',
+    headerName: 'Amount',
     renderCell: ({ row }) => {
       return (
         <CustomChip
           skin='light'
           size='small'
-          label={row.status}
+          label={row.amount}
           color={userStatusObj[row.status]}
-          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '18px' } }}
+          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '23px' } }}
         />
       )
     }
@@ -215,10 +227,11 @@ const FounderList = ({ apiData }) => {
   const [status, setStatus] = useState('')
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
+  const [publicData, setPublicData] = useState([])
 
   // ** Hooks
   const dispatch = useDispatch()
-  const store = useSelector(state => state.userData)
+  const store = useSelector(state => state.usageReport)
   useEffect(() => {
     dispatch(fetchData())
   }, [dispatch])
@@ -242,57 +255,44 @@ const FounderList = ({ apiData }) => {
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12} sx={{ height: '100%' }}>
-        <Card>
-          <CardHeader title='Search Filters' sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }} />
-          <CardContent>
-            <Grid container spacing={6}>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='role-select'>Select Role</InputLabel>
-                  <Select
-                    fullWidth
-                    value={role}
-                    id='select-role'
-                    label='Select Role'
-                    labelId='role-select'
-                    onChange={handleRoleChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='admin'>Admin</MenuItem>
-                    <MenuItem value='user'>User</MenuItem>
-                    <MenuItem value='guest'>Guest</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </CardContent>
-          <Divider />
-          <TableHeader
-            value={value}
-            handleFilter={handleFilter}
-            toggle={toggleAddUserDrawer}
-            headerBtn='true'
-            btnText='Add Usage'
-          />
-          <DataGrid
-            autoHeight
-            rows={store.memberData}
-            columns={columns}
-            checkboxSelection
-            disableRowSelectionOnClick
-            pageSizeOptions={[10, 25, 50]}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-          />
-        </Card>
+    <>
+      <Grid container spacing={6}>
+        <Grid item xs={12} sx={{ height: '100%' }}>
+          <Card>
+            <CardHeader
+              title={
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>Usage</div>
+                  <div>Total : {store.commitTotalAmount}</div>
+                </div>
+              }
+              sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }}
+            />
+            <Divider />
+            <TableHeader
+              value={value}
+              handleFilter={handleFilter}
+              toggle={toggleAddUserDrawer}
+              headerBtn='true'
+              btnText='Add'
+            />
+            <DataGrid
+              autoHeight
+              rows={store.UsageAllData}
+              columns={columns}
+              checkboxSelection
+              disableRowSelectionOnClick
+              pageSizeOptions={[10, 25, 50]}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
+            />
+          </Card>
+        </Grid>
       </Grid>
 
-      <FounderUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
-    </Grid>
+      <IncomeAddSidebarDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+    </>
   )
 }
 

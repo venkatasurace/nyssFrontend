@@ -6,7 +6,7 @@ import axios from 'axios'
 import authConfig from 'src/configs/auth'
 
 // ** Fetch Users
-export const fetchData = createAsyncThunk('incomeReport/fetchData', async params => {
+export const fetchData = createAsyncThunk('usageReport/fetchData', async params => {
   const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
 
   const axiosConfig = {
@@ -17,7 +17,7 @@ export const fetchData = createAsyncThunk('incomeReport/fetchData', async params
     }
   }
 
-  const response = await axios.get(authConfig.incomeReportEndpoint, axiosConfig)
+  const response = await axios.get(authConfig.usageReportEndpoint, axiosConfig)
 
   return response
 })
@@ -43,13 +43,10 @@ export const fetchData = createAsyncThunk('incomeReport/fetchData', async params
 // })
 
 export const appUsersSlice = createSlice({
-  name: 'incomeReport',
+  name: 'usageReport',
   initialState: {
-    incomeAllData: [],
-    commitFilterData: [],
-    publicFilterData: [],
-    commitTotalAmount: 0,
-    publicTotalAmount: 0,
+    UsageAllData: [],
+    totalAmount: 0,
     total: 1
   },
   reducers: {},
@@ -61,21 +58,12 @@ export const appUsersSlice = createSlice({
         ...eachData
       }))
 
-      const commitTotalAmount = updatedData
-        .filter((item, i) => item.category === 'Nember')
+      const TotalAmount = updatedData
         .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
-      const publicTotalAmount = updatedData
-        .filter((item, i) => item.category === 'public')
-        .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
-        .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-
-      state.incomeAllData = updatedData
-      state.commitFilterData = updatedData.filter((item, i) => item.category === 'Nember')
-      state.publicFilterData = updatedData.filter((item, i) => item.category === 'public')
-      state.commitTotalAmount = commitTotalAmount
-      state.publicTotalAmount = publicTotalAmount
+      state.UsageAllData = updatedData
+      state.totalAmount = TotalAmount
       state.total = action.payload.data.data.length
     })
   }

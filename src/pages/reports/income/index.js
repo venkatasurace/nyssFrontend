@@ -145,6 +145,23 @@ const RowOptions = ({ id }) => {
 
 const columns = [
   {
+    flex: 0.1,
+    minWidth: 230,
+    field: 'slno',
+    headerName: 'Sr.No',
+    renderCell: ({ row }) => {
+      const { slno } = row
+
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <Typography>{slno}</Typography>
+          </Box>
+        </Box>
+      )
+    }
+  },
+  {
     flex: 0.2,
     minWidth: 230,
     field: 'fullName',
@@ -310,8 +327,6 @@ const FounderList = ({ apiData }) => {
             />
           </Card>
         </Grid>
-
-        <FounderUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
       </Grid>
       <Grid container spacing={6} sx={{ mt: 5 }}>
         <Grid item xs={12} sx={{ height: '100%' }}>

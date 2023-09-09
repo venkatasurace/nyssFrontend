@@ -6,6 +6,7 @@ export default {
   userData: `${backendUrl}/api/userData/all`,
   rememberEndpoint: `${backendUrl}/api/auth/remember`,
   incomeReportEndpoint: `${backendUrl}/api/income/all`,
+  usageReportEndpoint: `${backendUrl}/api/usage/all`,
   storageTokenKeyName: 'NyssAccessToken',
-  onTokenExpiration: 'logout' // logout | refreshToken
+  onTokenExpiration: 'refreshToken' // logout | refreshToken
 }

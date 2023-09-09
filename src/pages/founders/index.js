@@ -30,7 +30,6 @@ import { useDispatch, useSelector } from 'react-redux'
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-stats-horizontal'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
@@ -144,6 +143,23 @@ const RowOptions = ({ id }) => {
 }
 
 const columns = [
+  {
+    flex: 0.1,
+    minWidth: 230,
+    field: 'slno',
+    headerName: 'Sr.No',
+    renderCell: ({ row }) => {
+      const { slno } = row
+
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <Typography>{slno}</Typography>
+          </Box>
+        </Box>
+      )
+    }
+  },
   {
     flex: 0.2,
     minWidth: 230,
@@ -282,6 +298,7 @@ const FounderList = ({ apiData }) => {
             headerBtn='true'
             btnText='Add Member'
           />
+
           <DataGrid
             autoHeight
             rows={store.memberData}
