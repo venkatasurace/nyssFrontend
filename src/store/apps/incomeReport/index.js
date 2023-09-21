@@ -62,7 +62,7 @@ export const appUsersSlice = createSlice({
       }))
 
       const commitTotalAmount = updatedData
-        .filter((item, i) => item.category === 'Nember')
+        .filter((item, i) => item.category === 'Member')
         .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
