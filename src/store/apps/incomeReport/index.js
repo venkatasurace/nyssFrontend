@@ -48,8 +48,10 @@ export const appUsersSlice = createSlice({
     incomeAllData: [],
     commitFilterData: [],
     publicFilterData: [],
+    additionalFilterData: [],
     commitTotalAmount: 0,
     publicTotalAmount: 0,
+    additionalTotalAmount: 0,
     total: 1
   },
   reducers: {},
@@ -67,15 +69,21 @@ export const appUsersSlice = createSlice({
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
       const publicTotalAmount = updatedData
-        .filter((item, i) => item.category === 'public')
+        .filter((item, i) => item.category === 'day')
+        .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+      const additionalTotalAmount = updatedData
+        .filter((item, i) => item.category === 'additional')
         .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
       state.incomeAllData = updatedData
       state.commitFilterData = updatedData.filter((item, i) => item.category === 'Member')
-      state.publicFilterData = updatedData.filter((item, i) => item.category === 'public')
+      state.publicFilterData = updatedData.filter((item, i) => item.category === 'day')
+      state.additionalFilterData = updatedData.filter((item, i) => item.category === 'additional')
       state.commitTotalAmount = commitTotalAmount
       state.publicTotalAmount = publicTotalAmount
+      state.additionalTotalAmount = additionalTotalAmount
       state.total = action.payload.data.data.length
     })
   }

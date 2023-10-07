@@ -118,12 +118,12 @@ const UserDropdown = props => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='log' src={profileData.imageUrl} sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt='log' src={profileData?.imageUrl} sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>{profileData.firstName}</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{profileData?.firstName}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                {profileData.role}
+                {profileData?.role}
               </Typography>
             </Box>
           </Box>

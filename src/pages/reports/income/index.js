@@ -295,6 +295,21 @@ const FounderList = ({ apiData }) => {
   return (
     <>
       <Grid container spacing={6}>
+        <Grid item xs={12} sx={{ height: '100%', mb: 3 }}>
+          <Card>
+            <CardHeader
+              title={
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>Total Income</div>
+                  <div>{store.commitTotalAmount + store.publicTotalAmount + store.additionalTotalAmount}</div>
+                </div>
+              }
+              sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }}
+            />
+          </Card>
+        </Grid>
+      </Grid>
+      <Grid container spacing={6}>
         <Grid item xs={12} sx={{ height: '100%' }}>
           <Card>
             <CardHeader
@@ -346,6 +361,37 @@ const FounderList = ({ apiData }) => {
             <DataGrid
               autoHeight
               rows={store.publicFilterData}
+              columns={columns}
+              checkboxSelection
+              disableRowSelectionOnClick
+              pageSizeOptions={[10, 25, 50]}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
+            />
+          </Card>
+        </Grid>
+
+        <IncomeAddSidebarDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+      </Grid>
+      <Grid container spacing={6} sx={{ mt: 5 }}>
+        <Grid item xs={12} sx={{ height: '100%' }}>
+          <Card>
+            <CardHeader
+              title={
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>Additional Income</div>
+                  <div>Total : {store.additionalTotalAmount}</div>
+                </div>
+              }
+              sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }}
+            />
+            <Divider />
+            <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
+
+            <DataGrid
+              autoHeight
+              rows={store.additionalFilterData}
               columns={columns}
               checkboxSelection
               disableRowSelectionOnClick
