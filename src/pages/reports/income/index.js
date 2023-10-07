@@ -73,6 +73,7 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 }))
 
 // ** renders client column
+
 const renderClient = row => {
   if (row.avatar.length) {
     return <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 34, height: 34 }} />
