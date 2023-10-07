@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import { Divider, Grid } from '@mui/material'
-import Chip from 'src/@core/components/mui/chip'
-import { useDispatch, useSelector } from 'react-redux'
 import { fetchData as fetchDataIncome } from 'src/store/apps/incomeReport'
 import { fetchData as fetchDataUsage } from 'src/store/apps/usageReport'
-import { useRouter } from 'next/router'
 
-const index = () => {
+const Index = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const commiteeIncomeStore = useSelector(state => state.incomeReport)
@@ -144,4 +143,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index
