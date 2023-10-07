@@ -72,6 +72,7 @@ export const appUsersSlice = createSlice({
         .filter((item, i) => item.category === 'day')
         .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+
       const additionalTotalAmount = updatedData
         .filter((item, i) => item.category === 'additional')
         .map(obj => obj.amount || 0) // Map each object to its "amount" property or 0 if it doesn't exist
